@@ -1,0 +1,19 @@
+{"properties": [
+  {
+    "name": "api.key.header.name",
+    "type": "java.lang.String",
+    "description": "A description for 'api.key.header.name'",
+    "defaultValue": "X-API-KEY"
+  },
+  {
+    "name": "api.key",
+    "type": "java.lang.String",
+    "description": "A description for 'api.key'",
+    "defaultValue": "ENC(encryptedValueHere)"
+  },
+  {
+    "name": "rate.limit",
+    "type": "java.lang.String",
+    "description": "A description for 'rate.limit'"
+  }
+]}
