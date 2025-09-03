@@ -1,12 +1,16 @@
 package com.api.ersmapi.controllers;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.ersmapi.config.DBConnection;
-import com.api.ersmapi.models.users.UserModel;
+import com.api.ersmapi.services.users.UserService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -14,16 +18,38 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/v1/user_service")
 @Tag(name = "User Service", description = "User Service for TerraFinder Application")
 public class UserController {
-    UserModel userModel = new UserModel();
+    UserService userService = new UserService();
 
     @Autowired
     private DBConnection dbConnection;
 
-    @GetMapping("/load_users")
-    public String loadUsers()  throws Exception {
-        userModel.con = dbConnection.getConnection();
-        String result = userModel.loadUsers();
-        userModel.con.close();
-        return result;
+    @PostMapping("/load_users")
+    public ResponseEntity<?> loadUsers(@RequestBody Map<String, Object> params) throws Exception {
+        int page = params.get("page") != null ? (Integer) params.get("page") : 1;
+        int limit = params.get("limit") != null ? (Integer) params.get("limit") : 10;
+        String search = params.get("search") != null ? (String) params.get("search") : "";
+
+        userService.con = dbConnection.getConnection();
+        String result = userService.loadUsers(page, limit, search);
+        userService.con.close();
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/add_user")
+    public ResponseEntity<?> userLogin(@RequestBody String jsonReq)  throws Exception {
+        userService.con = dbConnection.getConnection();
+        String result = userService.addUser(jsonReq);
+        userService.con.close();
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/get_user_by_id")
+    public ResponseEntity<?> getUserById(@RequestBody String jsonReq)  throws Exception {
+        userService.con = dbConnection.getConnection();
+        String result = userService.getUserById(jsonReq);
+        userService.con.close();
+        System.out.println(result);
+        return ResponseEntity.ok(result);
     }
 }

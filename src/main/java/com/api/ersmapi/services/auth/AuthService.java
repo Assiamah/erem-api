@@ -1,11 +1,11 @@
-package com.api.ersmapi.models.auth;
+package com.api.ersmapi.services.auth;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AuthModel {
+public class AuthService {
     
     public Connection con = null;
 
@@ -21,6 +21,36 @@ public class AuthModel {
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
 				result = rs.getString("user_login");
+			}
+			rs.close();
+		} catch (SQLException e) {
+			// Print Errors in console.
+			System.out.println(e.getMessage());
+			throw e;
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		return result;
+    }
+
+    public String verifyOtp(String jsonReq) throws Exception {
+        if (con == null) {
+            throw new Exception("Database connection is not established");
+        }
+        String result = null;
+        String SQL = "SELECT * FROM security.verify_otp(?)";
+		Connection conn = con;
+		try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+			pstmt.setString(1, jsonReq);
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				result = rs.getString("verify_otp");
 			}
 			rs.close();
 		} catch (SQLException e) {

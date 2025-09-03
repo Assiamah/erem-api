@@ -1,13 +1,14 @@
 package com.api.ersmapi.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.ersmapi.config.DBConnection;
-import com.api.ersmapi.models.auth.AuthModel;
+import com.api.ersmapi.services.auth.AuthService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -16,17 +17,26 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Authentication Service", description = "Authentication Service for TerraFinder Application")
 public class AuthController {
 
-    AuthModel authModel = new AuthModel();
+    AuthService authService = new AuthService();
 
     @Autowired
     private DBConnection dbConnection;
 
     @PostMapping("/user_login")
-    public String userLogin(@RequestBody String jsonReq)  throws Exception {
-        authModel.con = dbConnection.getConnection();
-        String result = authModel.userLogin(jsonReq);
-        authModel.con.close();
-        return result;
+    public ResponseEntity<?> userLogin(@RequestBody String jsonReq)  throws Exception {
+        authService.con = dbConnection.getConnection();
+        String result = authService.userLogin(jsonReq);
+        authService.con.close();
+        return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/verify_otp")
+    public ResponseEntity<?> verifyOtp(@RequestBody String jsonReq)  throws Exception {
+        authService.con = dbConnection.getConnection();
+        String result = authService.verifyOtp(jsonReq);
+        authService.con.close();
+        return ResponseEntity.ok(result);
+    }
+
     
 }
