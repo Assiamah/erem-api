@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @PostMapping("/add_user")
-    public ResponseEntity<?> userLogin(@RequestBody String jsonReq)  throws Exception {
+    public ResponseEntity<?> addUser(@RequestBody String jsonReq)  throws Exception {
         userService.con = dbConnection.getConnection();
         String result = userService.addUser(jsonReq);
         userService.con.close();
@@ -49,7 +49,15 @@ public class UserController {
         userService.con = dbConnection.getConnection();
         String result = userService.getUserById(jsonReq);
         userService.con.close();
-        System.out.println(result);
+        //System.out.println(result);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/update_user")
+    public ResponseEntity<?> updateUser(@RequestBody String jsonReq)  throws Exception {
+        userService.con = dbConnection.getConnection();
+        String result = userService.updateUser(jsonReq);
+        userService.con.close();
         return ResponseEntity.ok(result);
     }
 }
