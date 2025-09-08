@@ -1,110 +1,94 @@
 package com.api.ersmapi.filter;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.api.ersmapi.security.ApiKeyAuthToken;
+import com.api.ersmapi.services.ApiKeyService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import lombok.RequiredArgsConstructor;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
 @Component
+@RequiredArgsConstructor
 public class ApiKeyAuthFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiKeyAuthFilter.class);
-    private final String apiKeyHeaderName;
-    private final String validApiKey;
+    private static final String API_KEY_HEADER = "X-API-KEY";
+    private final ApiKeyService apiKeyService;
 
-    public ApiKeyAuthFilter(
-            @Value("${api.key.header.name}") String apiKeyHeaderName,
-            @Value("${api.key}") String encryptedValidApiKey,
-            @Value("${jasypt.encryptor.password}") String jasyptPassword,
-            @Value("${jasypt.encryptor.algorithm}") String jasyptAlgorithm) {
-
-        this.apiKeyHeaderName = apiKeyHeaderName;
-        this.validApiKey = decryptApiKey(encryptedValidApiKey, jasyptPassword, jasyptAlgorithm);
-
-        if (this.validApiKey == null || this.validApiKey.isEmpty()) {
-            throw new IllegalStateException("Failed to decrypt API key. Check: " +
-                    "1. Jasypt password is correct\n" +
-                    "2. Encryption algorithm matches\n" +
-                    "3. The encrypted value is correct");
-        }
-
-        logger.info("API Key Filter initialized successfully");
-    }
-
-    private String decryptApiKey(String encryptedText, String password, String algorithm) {
-        try {
-            logger.debug("Attempting decryption with algorithm: {}", algorithm);
-
-            StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
-            encryptor.setPassword(password);
-            encryptor.setAlgorithm(algorithm);
-
-            return encryptor.decrypt(encryptedText);
-        } catch (Exception e) {
-            logger.error("Decryption failed. Details:", e);
-            logger.error("Password used: [REDACTED]");
-            logger.error("Algorithm used: [REDACTED]");
-            logger.error("Encrypted text length: {}", encryptedText != null ? encryptedText.length() : 0);
-            return null;
-        }
-    }
+    // List of paths to exclude from API key authentication
+    private static final List<String> EXCLUDED_PATHS = Arrays.asList(
+        "/api/v1/auth/token",
+        "/api/v1/auth/api_key",
+        "/swagger-ui/**",
+        "/v3/api-docs/**"
+    );
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request, 
+            HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Skip auth for whitelisted endpoints
-        if (shouldSkipAuthentication(request)) {
+        String requestURI = request.getRequestURI();
+
+        // Skip API key validation for excluded paths
+        if (isExcludedPath(requestURI)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String apiKey = request.getHeader(apiKeyHeaderName);
+        String apiKey = getApiKeyFromRequest(request);
 
-        if (!isValidApiKey(apiKey)) {
-            logFailedAttempt(request, apiKey);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid API Key");
+        if (apiKey != null) {
+            var apiKeyEntity = apiKeyService.validateApiKey(apiKey);
+            
+            if (apiKeyEntity.isPresent()) {
+                var authentication = new ApiKeyAuthToken(apiKey);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                logger.info("Valid API Key Attempt - IP: {}, URI: {}, Method: {}, Key Provided: {}",
+                    request.getRemoteAddr(),
+                    request.getRequestURI(),
+                    request.getMethod(),
+                    apiKey != null ? "[REDACTED]" : "NULL");
+            } else {
+                logFailedAttempt(request, apiKey);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid API Key");
+                return;
+            }
+        } else {
+            // No API key provided for protected endpoint
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "API Key required");
             return;
         }
-
-        Authentication auth =
-                new UsernamePasswordAuthenticationToken("apiKeyUser", null, List.of());
-        SecurityContextHolder.getContext().setAuthentication(auth);
-
-        logger.info("Valid API Key Attempt - IP: {}, URI: {}, Method: {}, Key Provided: {}",
-                request.getRemoteAddr(),
-                request.getRequestURI(),
-                request.getMethod(),
-                apiKey != null ? "[REDACTED]" : "NULL");
 
         filterChain.doFilter(request, response);
     }
 
-    private boolean shouldSkipAuthentication(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        return uri.startsWith("/swagger") ||
-               uri.startsWith("/v3/api-docs") ||
-               uri.startsWith("/actuator");
+    private boolean isExcludedPath(String requestURI) {
+        return EXCLUDED_PATHS.stream().anyMatch(requestURI::startsWith);
     }
 
-    private boolean isValidApiKey(String apiKey) {
-        //System.out.println(validApiKey);
-        return apiKey != null && apiKey.equals(validApiKey);
+    private String getApiKeyFromRequest(HttpServletRequest request) {
+        String apiKey = request.getHeader(API_KEY_HEADER);
+        
+        if (apiKey == null) {
+            apiKey = request.getParameter("api_key");
+        }
+        
+        return apiKey;
     }
 
     private void logFailedAttempt(HttpServletRequest request, String apiKey) {
