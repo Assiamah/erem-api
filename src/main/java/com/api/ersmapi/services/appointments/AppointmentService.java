@@ -5,27 +5,41 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONObject;
+
 public class AppointmentService {
 
     public Connection con = null;
 
-    public String loadSlots() throws Exception {
-        if (con == null) {
+    public String loadSlots(Connection conn) throws Exception {
+        if (conn == null || conn.isClosed()) {
             throw new Exception("Database connection is not established");
         }
 
         String result = null;
-        Connection conn = con;
 
-        String SQL = "SELECT * FROM appointments.get_calendar_slots() AS result";
+        String SQL = "SELECT * FROM appointments.get_calendar_slots()";
 
         try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
-
             ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                result = rs.getString("get_calendar_slots");
+
+            JSONArray slots = new JSONArray(); // use org.json
+            while (rs.next()) {
+                JSONObject slot = new JSONObject();
+                slot.put("id", rs.getInt("id"));
+                slot.put("title", rs.getString("title"));
+                slot.put("start", rs.getTimestamp("start_time").toLocalDateTime().toString()); 
+                slot.put("end", rs.getTimestamp("end_time").toLocalDateTime().toString());
+                slot.put("color", rs.getString("color"));
+                slot.put("is_available", rs.getBoolean("is_available"));
+                slot.put("current_bookings", rs.getInt("current_bookings"));
+                slot.put("max_capacity", rs.getInt("max_capacity"));
+                slot.put("appointment_type_name", rs.getString("appointment_type_name"));
+
+                slots.put(slot);
             }
-            rs.close();
+            result = slots.toString();
         } catch (SQLException e) {
             System.out.println("Error loading slots: " + e.getMessage());
             throw e;
@@ -34,12 +48,11 @@ public class AppointmentService {
         return (result != null) ? result : "[]";
     }
 
-    public String getSlotsSummary() throws Exception {
-        if (con == null) {
+    public String getSlotsSummary(Connection conn) throws Exception {
+        if (conn == null || conn.isClosed()) {
             throw new Exception("Database connection is not established");
         }
 
-        Connection conn = con;
         String SQL = "SELECT * FROM appointments.get_slots_summary()";
 
         try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {

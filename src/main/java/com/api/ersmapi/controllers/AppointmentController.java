@@ -1,6 +1,8 @@
 package com.api.ersmapi.controllers;
 
 import java.util.Map;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,22 +32,35 @@ public class AppointmentController {
     private DBConnection dbConnection;
 
     @GetMapping("/load_slots")
-    public ResponseEntity<?> loadSlots() throws Exception {
-        appointmentService.con = dbConnection.getConnection();
-        String result = appointmentService.loadSlots();
-        appointmentService.con.close();
-
-        return ResponseEntity.ok(result);
+    public ResponseEntity<?> loadSlots() {
+        Connection conn = null;
+        try {
+            conn = dbConnection.getConnection();
+            String result = appointmentService.loadSlots(conn);
+            //System.out.println("get_all_menus: " + result);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            System.err.println("Error in loadSlots controller: " + e.getMessage());
+            return ResponseEntity.status(500).body("{\"status\": \"error\", \"message\": \"Failed to load slots: " + e.getMessage() + "\"}");
+        } finally {
+            closeConnection(conn);
+        }
     }
 
     @GetMapping("/get_slots_summary")
     public ResponseEntity<?> getSlotsSummary(@RequestParam Map<String, Object> params) throws Exception {
-        
-        appointmentService.con = dbConnection.getConnection();
-        String result = appointmentService.getSlotsSummary();
-        appointmentService.con.close();
-
-        return ResponseEntity.ok(result);
+        Connection conn = null;
+        try {
+            conn = dbConnection.getConnection();
+            String result = appointmentService.getSlotsSummary(conn);
+            //System.out.println("get_all_menus: " + result);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            System.err.println("Error in getSlotsSummary controller: " + e.getMessage());
+            return ResponseEntity.status(500).body("{\"status\": \"error\", \"message\": \"Failed to get slots summary: " + e.getMessage() + "\"}");
+        } finally {
+            closeConnection(conn);
+        }
     }
 
     @PostMapping("/create_slot")
@@ -173,5 +188,18 @@ public class AppointmentController {
         appointmentService.con.close();
 
         return ResponseEntity.ok(result);
+    }
+
+    // Helper method to safely close connection
+    private void closeConnection(Connection conn) {
+        if (conn != null) {
+            try {
+                if (!conn.isClosed()) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.err.println("Error closing connection: " + e.getMessage());
+            }
+        }
     }
 }
