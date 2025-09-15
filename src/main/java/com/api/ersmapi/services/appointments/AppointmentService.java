@@ -120,16 +120,16 @@ public class AppointmentService {
         return result;
     }
 
-    public String toggleSlotAvailability(Integer slotId, String jsonReq) throws Exception {
+    public String toggleSlotAvailability(Integer slotId, Integer userId) throws Exception {
         if (con == null) {
             throw new Exception("Database connection is not established");
         }
         String result = null;
-        String SQL = "SELECT * FROM appointments.toggle_slot_availability(?, ?::json)";
+        String SQL = "SELECT * FROM appointments.toggle_slot_availability(?, ?)";
         Connection conn = con;
         try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
             pstmt.setInt(1, slotId);
-            pstmt.setString(2, jsonReq);
+            pstmt.setInt(2, userId);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 result = rs.getString("toggle_slot_availability");
@@ -142,16 +142,16 @@ public class AppointmentService {
         return result;
     }
 
-    public String deleteSlot(Integer slotId, String jsonReq) throws Exception {
+    public String deleteSlot(Integer slotId, Integer userId) throws Exception {
         if (con == null) {
             throw new Exception("Database connection is not established");
         }
         String result = null;
-        String SQL = "SELECT * FROM appointments.delete_slot(?, ?::json)";
+        String SQL = "SELECT * FROM appointments.delete_slot(?, ?)";
         Connection conn = con;
         try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
             pstmt.setInt(1, slotId);
-            pstmt.setString(2, jsonReq);
+            pstmt.setInt(2, userId);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 result = rs.getString("delete_slot");

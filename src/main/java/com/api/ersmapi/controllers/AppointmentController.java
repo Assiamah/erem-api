@@ -80,17 +80,23 @@ public class AppointmentController {
     }
 
     @PostMapping("/toggle_slot_availability/{slotId}")
-    public ResponseEntity<?> toggleSlotAvailability(@PathVariable Integer slotId, @RequestBody String jsonReq) throws Exception {
+    public ResponseEntity<?> toggleSlotAvailability(
+            @PathVariable Integer slotId, 
+            @RequestParam("userId") Integer userId) throws Exception {
+
         appointmentService.con = dbConnection.getConnection();
-        String result = appointmentService.toggleSlotAvailability(slotId, jsonReq);
+        String result = appointmentService.toggleSlotAvailability(slotId, userId);
         appointmentService.con.close();
         return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("/delete_slot/{slotId}")
-    public ResponseEntity<?> deleteSlot(@PathVariable Integer slotId, @RequestBody String jsonReq) throws Exception {
+    public ResponseEntity<?> deleteSlot(
+            @PathVariable Integer slotId,
+            @RequestParam("userId") Integer userId) throws Exception {
+        
         appointmentService.con = dbConnection.getConnection();
-        String result = appointmentService.deleteSlot(slotId, jsonReq);
+        String result = appointmentService.deleteSlot(slotId, userId);
         appointmentService.con.close();
         return ResponseEntity.ok(result);
     }
