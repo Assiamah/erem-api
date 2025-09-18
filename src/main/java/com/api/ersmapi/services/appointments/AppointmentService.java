@@ -410,4 +410,65 @@ public class AppointmentService {
 
         return (result != null) ? result : "[]";
     }
+
+
+
+        public String loadAppointments() throws Exception {
+            if (con == null) {
+                throw new Exception("Database connection is not established");
+            }
+
+            String result = null;
+            Connection conn = con;
+
+            String SQL = "SELECT * FROM appointments.load_appointments() AS result";
+
+            try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+
+                ResultSet rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    result = rs.getString("load_appointments");
+                }
+                rs.close();
+            } catch (SQLException e) {
+                System.out.println("Error loading slots: " + e.getMessage());
+                throw e;
+            }
+
+            return (result != null) ? result : "[]";
+        }
+
+
+
+       public String appointmentById(String jsonReq) throws Exception {
+        if (con == null) {
+            throw new Exception("Database connection is not established");
+        }
+        String result = null;
+        String SQL = "SELECT * FROM appointments.get_appointment_by_id(?::json)";
+		Connection conn = con;
+		try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+			pstmt.setString(1, jsonReq);
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				result = rs.getString("get_appointment_by_id");
+			}
+			rs.close();
+		} catch (SQLException e) {
+			// Print Errors in console.
+			System.out.println(e.getMessage());
+			throw e;
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		return result;
+    }
+
+
 }
