@@ -60,4 +60,12 @@ public class UserController {
         userService.con.close();
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/update_portal_user")
+    public ResponseEntity<?> updatePortalUser(@RequestBody String jsonReq)  throws Exception {
+        userService.con = dbConnection.getConnection();
+        String result = userService.updatePortalUser(jsonReq);
+        userService.con.close();
+        return ResponseEntity.ok(result);
+    }
 }

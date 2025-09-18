@@ -38,5 +38,28 @@ public class AuthController {
         return ResponseEntity.ok(result);
     }
 
-    
+    @PostMapping("/check_registration_email")
+    public ResponseEntity<?> checkRegistrationEmail(@RequestBody String jsonReq)  throws Exception {
+        authService.con = dbConnection.getConnection();
+        String result = authService.checkRegistrationEmail(jsonReq);
+        authService.con.close();
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/verify_registration_email")
+    public ResponseEntity<?> verifyRegistrationEmail(@RequestBody String jsonReq)  throws Exception {
+        authService.con = dbConnection.getConnection();
+        String result = authService.verifyRegistrationEmail(jsonReq);
+        authService.con.close();
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/create_portal_user_password")
+    public ResponseEntity<?> createPortalUserPassword(@RequestBody String jsonReq)  throws Exception {
+        authService.con = dbConnection.getConnection();
+        String result = authService.createPortalUserPassword(jsonReq);
+        authService.con.close();
+        return ResponseEntity.ok(result);
+    }
+
 }

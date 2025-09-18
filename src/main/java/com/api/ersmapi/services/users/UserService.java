@@ -134,4 +134,34 @@ public class UserService {
 		}
 		return result;
     }
+
+    public String updatePortalUser(String jsonReq) throws Exception {
+        if (con == null) {
+            throw new Exception("Database connection is not established");
+        }
+        String result = null;
+        String SQL = "SELECT * FROM users.update_portal_user(?::json)";
+		Connection conn = con;
+		try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+			pstmt.setString(1, jsonReq);
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				result = rs.getString("update_portal_user");
+			}
+			rs.close();
+		} catch (SQLException e) {
+			// Print Errors in console.
+			System.out.println(e.getMessage());
+			throw e;
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		return result;
+    }
 }
