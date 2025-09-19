@@ -229,7 +229,7 @@ public class AppointmentController {
         }
     }
 
-       @GetMapping("/get_appointments")
+    @GetMapping("/get_appointments")
     public ResponseEntity<?> loadAppointments() throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.loadAppointments();
@@ -258,4 +258,24 @@ public class AppointmentController {
 
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/get_aavailable_slot_by_date")
+    public ResponseEntity<?> getAvailableSlotByDate(@RequestBody String jsonReq)  throws Exception {
+        appointmentService.con = dbConnection.getConnection();
+        String result = appointmentService.getAvailableSlotByDate(jsonReq);
+        appointmentService.con.close();
+        //System.out.println(result);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/reschedule_appointment")
+    public ResponseEntity<?> rescheduleAppointment(@RequestBody String jsonReq) throws Exception {
+        appointmentService.con = dbConnection.getConnection();
+        String result = appointmentService.rescheduleAppointment(jsonReq);
+        appointmentService.con.close();
+        return ResponseEntity.ok(result);
+    }
+
+
+
 }
