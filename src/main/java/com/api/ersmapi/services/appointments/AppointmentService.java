@@ -471,4 +471,59 @@ public class AppointmentService {
     }
 
 
+
+
+    public String getAvailableSlotByDate(String jsonReq) throws Exception {
+        if (con == null) {
+            throw new Exception("Database connection is not established");
+        }
+        String result = null;
+        String SQL = "SELECT * FROM appointments.get_available_slots(?::json)";
+		Connection conn = con;
+		try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+			pstmt.setString(1, jsonReq);
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				result = rs.getString("get_available_slots");
+			}
+			rs.close();
+		} catch (SQLException e) {
+			// Print Errors in console.
+			System.out.println(e.getMessage());
+			throw e;
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		return result;
+    }
+
+
+    public String rescheduleAppointment(String jsonReq) throws Exception {
+        if (con == null) {
+            throw new Exception("Database connection is not established");
+        }
+        String result = null;
+        String SQL = "SELECT * FROM appointments.reschedule_appointment(?::json)";
+        Connection conn = con;
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            pstmt.setString(1, jsonReq);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                result = rs.getString("reschedule_appointment");
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw e;
+        }
+        return result;
+    }
+
+
 }
