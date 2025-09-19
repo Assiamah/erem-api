@@ -117,6 +117,15 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
+    
+    @PostMapping("/book_self_appointment")
+    public ResponseEntity<?> bookSelfAppointment(@RequestBody String jsonReq) throws Exception {
+        appointmentService.con = dbConnection.getConnection();
+        String result = appointmentService.bookSelfAppointment(jsonReq);
+        appointmentService.con.close();
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping("/cancel_appointment/{appointmentId}")
     public ResponseEntity<?> cancelAppointment(@PathVariable Integer appointmentId, @RequestBody String jsonReq) throws Exception {
         appointmentService.con = dbConnection.getConnection();
@@ -125,15 +134,26 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
+    // @GetMapping("/get_user_appointments")
+    // public ResponseEntity<?> getUserAppointments(@RequestParam Map<String, Object> params) throws Exception {
+    //     Integer userId = params.get("user_id") != null ? Integer.parseInt(params.get("user_id").toString()) : null;
+    //     Integer page = params.get("page") != null ? Integer.parseInt(params.get("page").toString()) : 0;
+    //     Integer size = params.get("size") != null ? Integer.parseInt(params.get("size").toString()) : 10;
+    //     Boolean isProvider = params.get("is_provider") != null ? Boolean.parseBoolean(params.get("is_provider").toString()) : false;
+    //     String 
+        
+    //     appointmentService.con = dbConnection.getConnection();
+    //     String result = appointmentService.getUserAppointments(userId, page, size, isProvider);
+    //     appointmentService.con.close();
+
+    //     return ResponseEntity.ok(result);
+    // }
+
     @GetMapping("/get_user_appointments")
     public ResponseEntity<?> getUserAppointments(@RequestParam Map<String, Object> params) throws Exception {
-        Integer userId = params.get("user_id") != null ? Integer.parseInt(params.get("user_id").toString()) : null;
-        Integer page = params.get("page") != null ? Integer.parseInt(params.get("page").toString()) : 0;
-        Integer size = params.get("size") != null ? Integer.parseInt(params.get("size").toString()) : 10;
-        Boolean isProvider = params.get("is_provider") != null ? Boolean.parseBoolean(params.get("is_provider").toString()) : false;
         
         appointmentService.con = dbConnection.getConnection();
-        String result = appointmentService.getUserAppointments(userId, page, size, isProvider);
+        String result = appointmentService.getUserAppointments(params);
         appointmentService.con.close();
 
         return ResponseEntity.ok(result);
@@ -218,9 +238,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-
-
-      @PostMapping("/get_appointment_by_id")
+    @PostMapping("/get_appointment_by_id")
     public ResponseEntity<?> appointmentById(@RequestBody String jsonReq)  throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.appointmentById(jsonReq);
@@ -229,5 +247,15 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/get_upcoming_appointments")
+    public ResponseEntity<?> getUpcomingAppointments(@RequestParam Map<String, Object> params) throws Exception {
+        Integer userId = params.get("user_id") != null ? Integer.parseInt(params.get("user_id").toString()) : null;
+        Integer daysAhead = params.get("days_ahead") != null ? Integer.parseInt(params.get("days_ahead").toString()) : 0;
+        
+        appointmentService.con = dbConnection.getConnection();
+        String result = appointmentService.getUpcomingAppointments(userId, daysAhead);
+        appointmentService.con.close();
 
+        return ResponseEntity.ok(result);
+    }
 }

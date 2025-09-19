@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
@@ -31,7 +32,7 @@ public class AppointmentService {
                 slot.put("title", rs.getString("title"));
                 slot.put("start", rs.getTimestamp("start_time").toLocalDateTime().toString()); 
                 slot.put("end", rs.getTimestamp("end_time").toLocalDateTime().toString());
-                slot.put("color", rs.getString("color"));
+                slot.put("className", rs.getString("color"));
                 slot.put("is_available", rs.getBoolean("is_available"));
                 slot.put("current_bookings", rs.getInt("current_bookings"));
                 slot.put("max_capacity", rs.getInt("max_capacity"));
@@ -209,6 +210,28 @@ public class AppointmentService {
         return result;
     }
 
+    
+    public String bookSelfAppointment(String jsonReq) throws Exception {
+        if (con == null) {
+            throw new Exception("Database connection is not established");
+        }
+        String result = null;
+        String SQL = "SELECT * FROM appointments.book_self_appointment(?::json)";
+        Connection conn = con;
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            pstmt.setString(1, jsonReq);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                result = rs.getString("book_self_appointment");
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw e;
+        }
+        return result;
+    }
+
     public String cancelAppointment(Integer appointmentId, String jsonReq) throws Exception {
         if (con == null) {
             throw new Exception("Database connection is not established");
@@ -231,34 +254,34 @@ public class AppointmentService {
         return result;
     }
 
-    public String getUserAppointments(Integer userId, Integer page, Integer size, Boolean isProvider) throws Exception {
-        if (con == null) {
-            throw new Exception("Database connection is not established");
-        }
+    // public String getUserAppointments(Integer userId, Integer page, Integer size, Boolean isProvider) throws Exception {
+    //     if (con == null) {
+    //         throw new Exception("Database connection is not established");
+    //     }
 
-        String result = null;
-        Connection conn = con;
+    //     String result = null;
+    //     Connection conn = con;
 
-        String SQL = "SELECT * FROM appointments.get_user_appointments(?, ?, ?, ?) AS result";
+    //     String SQL = "SELECT * FROM appointments.get_user_appointments(?, ?, ?, ?) AS result";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
-            pstmt.setInt(1, userId);
-            pstmt.setInt(2, page);
-            pstmt.setInt(3, size);
-            pstmt.setBoolean(4, isProvider);
+    //     try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+    //         pstmt.setInt(1, userId);
+    //         pstmt.setInt(2, page);
+    //         pstmt.setInt(3, size);
+    //         pstmt.setBoolean(4, isProvider);
 
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                result = rs.getString("result");
-            }
-            rs.close();
-        } catch (SQLException e) {
-            System.out.println("Error getting user appointments: " + e.getMessage());
-            throw e;
-        }
+    //         ResultSet rs = pstmt.executeQuery();
+    //         if (rs.next()) {
+    //             result = rs.getString("result");
+    //         }
+    //         rs.close();
+    //     } catch (SQLException e) {
+    //         System.out.println("Error getting user appointments: " + e.getMessage());
+    //         throw e;
+    //     }
 
-        return (result != null) ? result : "[]";
-    }
+    //     return (result != null) ? result : "[]";
+    // }
 
     public String getAvailableSlots(String date, Integer appointmentTypeId) throws Exception {
         if (con == null) {
@@ -470,5 +493,205 @@ public class AppointmentService {
 		return result;
     }
 
+    public String getUserAppointments(Map<String, Object> params) throws Exception {
+        if (con == null) {
+            throw new Exception("Database connection is not established");
+        }
 
+        String result = null;
+        Connection conn = con;
+
+        String SQL = """
+            SELECT COALESCE(json_agg(t), '[]'::json) AS result
+            FROM appointments.get_user_appointments_with_filters(?, ?, ?, ?, ?, ?, ?) t
+        """;
+
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            Integer userId = params.get("user_id") != null 
+                ? Integer.parseInt(params.get("user_id").toString()) 
+                : null;
+
+            Integer page = params.get("page") != null 
+                ? Integer.parseInt(params.get("page").toString()) 
+                : 0;
+
+            Integer size = params.get("size") != null 
+                ? Integer.parseInt(params.get("size").toString()) 
+                : 10;
+
+            Boolean isProvider = params.get("is_provider") != null 
+                ? Boolean.parseBoolean(params.get("is_provider").toString()) 
+                : false;
+            String status = (String) params.get("status");
+            String startDate = (String) params.get("start_date");
+            String endDate = (String) params.get("end_date");
+
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, page != null ? page : 0);
+            pstmt.setInt(3, size != null ? size : 10);
+            pstmt.setBoolean(4, isProvider != null ? isProvider : false);
+            
+            // Handle nullable parameters
+            if (status != null) {
+                pstmt.setString(5, status);
+            } else {
+                pstmt.setNull(5, java.sql.Types.VARCHAR);
+            }
+            
+            if (startDate != null) {
+                pstmt.setString(6, startDate);
+            } else {
+                pstmt.setNull(6, java.sql.Types.VARCHAR);
+            }
+            
+            if (endDate != null) {
+                pstmt.setString(7, endDate);
+            } else {
+                pstmt.setNull(7, java.sql.Types.VARCHAR);
+            }
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                result = rs.getString("result");
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println("Error getting user appointments: " + e.getMessage());
+            throw e;
+        }
+
+        return (result != null) ? result : "{\"appointments\": [], \"total_count\": 0}";
+    }
+
+    public String getUpcomingAppointments(Integer userId, Integer daysAhead) throws Exception {
+        if (con == null) {
+            throw new Exception("Database connection is not established");
+        }
+
+        String result = null;
+        Connection conn = con;
+
+        String SQL = """
+            SELECT COALESCE(json_agg(t), '[]'::json) AS result
+            FROM appointments.get_upcoming_appointments(?, ?) t
+        """;
+
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, daysAhead != null ? daysAhead : 30);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                result = rs.getString("result");
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println("Error getting upcoming appointments: " + e.getMessage());
+            throw e;
+        }
+
+        return (result != null) ? result : "[]";
+    }
+
+    public String getAppointmentDetailsForClient(Integer appointmentId, Integer clientId) throws Exception {
+        if (con == null) {
+            throw new Exception("Database connection is not established");
+        }
+
+        String result = null;
+        Connection conn = con;
+
+        String SQL = "SELECT * FROM appointments.get_appointment_details_for_client(?, ?) AS result";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            pstmt.setInt(1, appointmentId);
+            pstmt.setInt(2, clientId);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                result = rs.getString("result");
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println("Error getting appointment details: " + e.getMessage());
+            throw e;
+        }
+
+        return (result != null) ? result : "{}";
+    }
+
+    public String getProviderAppointments(Map<String, Object> params) throws Exception {
+        if (con == null) {
+            throw new Exception("Database connection is not established");
+        }
+
+        String result = null;
+        Connection conn = con;
+
+        String SQL = "SELECT * FROM appointments.get_provider_appointments_with_filters(?, ?, ?, ?, ?) AS result";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            Integer providerId = (Integer) params.get("provider_id");
+            Integer page = (Integer) params.get("page");
+            Integer size = (Integer) params.get("size");
+            String status = (String) params.get("status");
+            String startDate = (String) params.get("start_date");
+            String endDate = (String) params.get("end_date");
+
+            pstmt.setInt(1, providerId);
+            pstmt.setInt(2, page != null ? page : 0);
+            pstmt.setInt(3, size != null ? size : 10);
+            
+            // Handle nullable parameters
+            if (status != null) {
+                pstmt.setString(4, status);
+            } else {
+                pstmt.setNull(4, java.sql.Types.VARCHAR);
+            }
+            
+            if (startDate != null) {
+                pstmt.setString(5, startDate);
+            } else {
+                pstmt.setNull(5, java.sql.Types.VARCHAR);
+            }
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                result = rs.getString("result");
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println("Error getting provider appointments: " + e.getMessage());
+            throw e;
+        }
+
+        return (result != null) ? result : "{\"appointments\": [], \"total_count\": 0}";
+    }
+
+    public String getAppointmentDetailsForProvider(Integer appointmentId, Integer providerId) throws Exception {
+        if (con == null) {
+            throw new Exception("Database connection is not established");
+        }
+
+        String result = null;
+        Connection conn = con;
+
+        String SQL = "SELECT * FROM appointments.get_appointment_details_for_provider(?, ?) AS result";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            pstmt.setInt(1, appointmentId);
+            pstmt.setInt(2, providerId);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                result = rs.getString("result");
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println("Error getting provider appointment details: " + e.getMessage());
+            throw e;
+        }
+
+        return (result != null) ? result : "{}";
+    }
 }
