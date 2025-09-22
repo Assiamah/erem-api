@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.springframework.web.bind.annotation.PostMapping;
 
 public class AppointmentService {
 
@@ -232,16 +233,17 @@ public class AppointmentService {
         return result;
     }
 
-    public String cancelAppointment(Integer appointmentId, String jsonReq) throws Exception {
+
+
+    public String cancelAppointment(String jsonReq) throws Exception {
         if (con == null) {
             throw new Exception("Database connection is not established");
         }
         String result = null;
-        String SQL = "SELECT * FROM appointments.cancel_appointment(?, ?::json)";
+        String SQL = "SELECT * FROM appointments.cancel_appointment(?)";       
         Connection conn = con;
         try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
-            pstmt.setInt(1, appointmentId);
-            pstmt.setString(2, jsonReq);
+            pstmt.setString(1, jsonReq);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 result = rs.getString("cancel_appointment");
@@ -253,6 +255,9 @@ public class AppointmentService {
         }
         return result;
     }
+
+        // @PostMapping("/{appointmentId}/cancel")
+
 
     // public String getUserAppointments(Integer userId, Integer page, Integer size, Boolean isProvider) throws Exception {
     //     if (con == null) {

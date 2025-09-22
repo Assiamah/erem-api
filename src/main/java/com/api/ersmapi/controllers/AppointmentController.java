@@ -126,13 +126,16 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/cancel_appointment/{appointmentId}")
-    public ResponseEntity<?> cancelAppointment(@PathVariable Integer appointmentId, @RequestBody String jsonReq) throws Exception {
+ 
+
+       @PostMapping("/cancel_appointment")
+    public ResponseEntity<?> cancelAppointment(@RequestBody String jsonReq) throws Exception {
         appointmentService.con = dbConnection.getConnection();
-        String result = appointmentService.cancelAppointment(appointmentId, jsonReq);
+        String result = appointmentService.cancelAppointment(jsonReq);
         appointmentService.con.close();
         return ResponseEntity.ok(result);
     }
+    
 
     // @GetMapping("/get_user_appointments")
     // public ResponseEntity<?> getUserAppointments(@RequestParam Map<String, Object> params) throws Exception {

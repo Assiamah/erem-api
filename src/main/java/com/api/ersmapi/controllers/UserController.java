@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,4 +69,15 @@ public class UserController {
         userService.con.close();
         return ResponseEntity.ok(result);
     }
+
+
+      @GetMapping("/get_user_select")
+    public ResponseEntity<?> getUserSelect() throws Exception {
+        userService.con = dbConnection.getConnection();
+        String result = userService.getUserSelect();
+        userService.con.close();
+        return ResponseEntity.ok(result);
+    }
+
+
 }

@@ -164,4 +164,31 @@ public class UserService {
 		}
 		return result;
     }
+
+
+
+	    public String getUserSelect() throws Exception {
+        if (con == null) {
+            throw new Exception("Database connection is not established");
+        }
+
+        String result = null;
+        Connection conn = con;
+
+        String SQL = "SELECT * FROM users.load_users_for_select() AS result";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                result = rs.getString("result");
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println("Error getting Users: " + e.getMessage());
+            throw e;
+        }
+
+        return (result != null) ? result : "[]";
+    }
+
 }
