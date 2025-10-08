@@ -191,4 +191,33 @@ public class UserService {
         return (result != null) ? result : "[]";
     }
 
+	public String saveApplicant(String jsonReq) throws Exception {
+        if (con == null) {
+            throw new Exception("Database connection is not established");
+        }
+        String result = null;
+        String SQL = "SELECT * FROM services.save_applicant(?::jsonb)";
+		Connection conn = con;
+		try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+			pstmt.setString(1, jsonReq);
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				result = rs.getString("save_applicant");
+			}
+			rs.close();
+		} catch (SQLException e) {
+			// Print Errors in console.
+			System.out.println(e.getMessage());
+			throw e;
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		return result;
+    }
 }

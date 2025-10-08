@@ -71,7 +71,7 @@ public class UserController {
     }
 
 
-      @GetMapping("/get_user_select")
+    @GetMapping("/get_user_select")
     public ResponseEntity<?> getUserSelect() throws Exception {
         userService.con = dbConnection.getConnection();
         String result = userService.getUserSelect();
@@ -79,5 +79,11 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
-
+    @PostMapping("/save_applicant")
+    public ResponseEntity<?> saveApplicant(@RequestBody String jsonReq)  throws Exception {
+        userService.con = dbConnection.getConnection();
+        String result = userService.saveApplicant(jsonReq);
+        userService.con.close();
+        return ResponseEntity.ok(result);
+    }
 }
