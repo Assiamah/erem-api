@@ -128,7 +128,7 @@ public class AppointmentController {
 
  
 
-       @PostMapping("/cancel_appointment")
+    @PostMapping("/cancel_appointment")
     public ResponseEntity<?> cancelAppointment(@RequestBody String jsonReq) throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.cancelAppointment(jsonReq);

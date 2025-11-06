@@ -70,7 +70,6 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
-
     @GetMapping("/get_user_select")
     public ResponseEntity<?> getUserSelect() throws Exception {
         userService.con = dbConnection.getConnection();
