@@ -116,7 +116,6 @@ public class AppointmentController {
         appointmentService.con.close();
         return ResponseEntity.ok(result);
     }
-
     
     @PostMapping("/book_self_appointment")
     public ResponseEntity<?> bookSelfAppointment(@RequestBody String jsonReq) throws Exception {
@@ -125,8 +124,6 @@ public class AppointmentController {
         appointmentService.con.close();
         return ResponseEntity.ok(result);
     }
-
- 
 
     @PostMapping("/cancel_appointment")
     public ResponseEntity<?> cancelAppointment(@RequestBody String jsonReq) throws Exception {
@@ -278,7 +275,4 @@ public class AppointmentController {
         appointmentService.con.close();
         return ResponseEntity.ok(result);
     }
-
-
-
 }

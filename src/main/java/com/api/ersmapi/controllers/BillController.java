@@ -8,10 +8,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.ersmapi.config.DBConnection;
 import com.api.ersmapi.services.bills.BillService;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -37,6 +40,32 @@ public class BillController {
         billService.con = dbConnection.getConnection();
         int billId = request.get("bill_id");
         String result = billService.getCompleteBillDetails(billId);
+        billService.con.close();
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/get_user_bills")
+    public ResponseEntity<?> getUserBills(@RequestParam Map<String, Object> params) throws Exception {
+        billService.con = dbConnection.getConnection();
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonReq = mapper.writeValueAsString(params); // ✅ produces {"user_id":20,"page":1,"pageSize":10}
+        String result = billService.getUserBills(jsonReq);
+        billService.con.close();
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/get_user_bills_stats")
+    public ResponseEntity<?> getUserBillsStats(@RequestBody String jsonReq) throws Exception {
+        billService.con = dbConnection.getConnection();
+        String result = billService.getUserBillsStats(jsonReq);
+        billService.con.close();
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/get_bill_details")
+    public ResponseEntity<?> getBillDetails(@RequestBody String jsonReq) throws Exception {
+        billService.con = dbConnection.getConnection();
+        String result = billService.getBillDetails(jsonReq);
         billService.con.close();
         return ResponseEntity.ok(result);
     }

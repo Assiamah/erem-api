@@ -61,5 +61,12 @@ public class AppDataController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/get_submitted_applications")
+    public ResponseEntity<?> getSubmittedApplications()  throws Exception {
+        appDataService.con = dbConnection.getConnection();
+        String result = appDataService.getSubmittedApplications();
+        appDataService.con.close();
+        return ResponseEntity.ok(result);
+    }
     
 }

@@ -146,4 +146,35 @@ public class AppDataService {
         }
         return result;
     }
+
+    public String getSubmittedApplications() throws Exception {
+        if (con == null) {
+            throw new Exception("Database connection is not established");
+        }
+
+        String result = null;
+        String SQL = "SELECT json_agg(t) AS result FROM services.get_submitted_applications() t";
+        Connection conn = con;
+
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                result = rs.getString("result");
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw e;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+
+        return result;
+    }
 }
