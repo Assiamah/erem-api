@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/v1/user_service")
-@Tag(name = "User Service", description = "User Service for TerraFinder Application")
+@Tag(name = "User Service", description = "User Service for DiLAP Application")
 public class UserController {
     UserService userService = new UserService();
 

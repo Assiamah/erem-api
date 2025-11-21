@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/v1/bill_service")
-@Tag(name = "Bill Service", description = "Bill Service for TerraFinder Application")
+@Tag(name = "Bill Service", description = "Bill Service for DiLAP Application")
 public class BillController {
     BillService billService = new BillService();
 

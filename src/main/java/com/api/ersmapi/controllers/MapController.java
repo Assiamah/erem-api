@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/v1/map_service")
-@Tag(name = "Menu Service", description = "Menu Service for TerraFinder Application")
+@Tag(name = "Menu Service", description = "Menu Service for DiLAP Application")
 public class MapController {
 
     @Autowired

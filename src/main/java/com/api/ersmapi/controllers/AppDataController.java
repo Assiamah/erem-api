@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/v1/app_data_service")
-@Tag(name = "App Data Service", description = "App Data Service for TerraFinder Application")
+@Tag(name = "App Data Service", description = "App Data Service for DiLAP Application")
 public class AppDataController {
     
     AppDataService appDataService = new AppDataService();

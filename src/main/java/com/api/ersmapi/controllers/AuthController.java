@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/v1/auth_service")
-@Tag(name = "Authentication Service", description = "Authentication Service for TerraFinder Application")
+@Tag(name = "Authentication Service", description = "Authentication Service for DiLAP Application")
 public class AuthController {
 
     AuthService authService = new AuthService();

@@ -17,7 +17,7 @@ import java.sql.SQLException;
 
 @RestController
 @RequestMapping("/v1/auth")
-@Tag(name = "ApiKey Service", description = "ApiKey Service for TerraFinder Application")
+@Tag(name = "ApiKey Service", description = "ApiKey Service for DiLAP Application")
 @RequiredArgsConstructor
 public class ApiKeyController {
 
