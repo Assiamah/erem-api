@@ -33,7 +33,8 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
         "/api/v1/auth/token",
         "/api/v1/auth/api_key",
         "/swagger-ui/**",
-        "/v3/api-docs/**"
+        "/v3/api-docs/**",
+        "/api/v1/payment_service/process_payment_callback"
     );
 
     @Override
