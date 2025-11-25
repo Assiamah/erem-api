@@ -50,7 +50,7 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
         }
 
         String apiKey = getApiKeyFromRequest(request);
-        System.out.println(apiKey);
+        // System.out.println(apiKey);
 
         if (apiKey != null) {
             var apiKeyEntity = apiKeyService.validateApiKey(apiKey);
