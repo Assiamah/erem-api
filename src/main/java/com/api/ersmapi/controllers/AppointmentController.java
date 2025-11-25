@@ -22,7 +22,7 @@ import com.api.ersmapi.services.appointments.AppointmentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/v1/appointment_service")
+@RequestMapping("/v1/appointment-service")
 @Tag(name = "Appointment Service", description = "Appointment Service for managing appointments and time slots")
 public class AppointmentController {
     
@@ -31,7 +31,7 @@ public class AppointmentController {
     @Autowired
     private DBConnection dbConnection;
 
-    @GetMapping("/load_slots")
+    @GetMapping("/load-slots")
     public ResponseEntity<?> loadSlots() {
         Connection conn = null;
         try {
@@ -47,7 +47,7 @@ public class AppointmentController {
         }
     }
 
-    @GetMapping("/get_slots_summary")
+    @GetMapping("/get-slots-summary")
     public ResponseEntity<?> getSlotsSummary(@RequestParam Map<String, Object> params) throws Exception {
         Connection conn = null;
         try {
@@ -63,7 +63,7 @@ public class AppointmentController {
         }
     }
 
-    @PostMapping("/create_slot")
+    @PostMapping("/create-slot")
     public ResponseEntity<?> createSlot(@RequestBody String jsonReq) throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.createSlot(jsonReq);
@@ -71,7 +71,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/create_batch_slots")
+    @PostMapping("/create-batch-slots")
     public ResponseEntity<?> createBatchSlots(@RequestBody String jsonReq) throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.createBatchSlots(jsonReq);
@@ -79,7 +79,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/toggle_slot_availability/{slotId}")
+    @PostMapping("/toggle-slot-availability/{slotId}")
     public ResponseEntity<?> toggleSlotAvailability(
             @PathVariable Integer slotId, 
             @RequestParam("userId") Integer userId) throws Exception {
@@ -90,7 +90,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @DeleteMapping("/delete_slot/{slotId}")
+    @DeleteMapping("/delete-slot/{slotId}")
     public ResponseEntity<?> deleteSlot(
             @PathVariable Integer slotId,
             @RequestParam("userId") Integer userId) throws Exception {
@@ -101,7 +101,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/get_appointment_types")
+    @GetMapping("/get-appointment-types")
     public ResponseEntity<?> getAppointmentTypes() throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.getAppointmentTypes();
@@ -109,7 +109,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/book_appointment")
+    @PostMapping("/book-appointment")
     public ResponseEntity<?> bookAppointment(@RequestBody String jsonReq) throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.bookAppointment(jsonReq);
@@ -117,7 +117,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
     
-    @PostMapping("/book_self_appointment")
+    @PostMapping("/book-self-appointment")
     public ResponseEntity<?> bookSelfAppointment(@RequestBody String jsonReq) throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.bookSelfAppointment(jsonReq);
@@ -125,7 +125,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/cancel_appointment")
+    @PostMapping("/cancel-appointment")
     public ResponseEntity<?> cancelAppointment(@RequestBody String jsonReq) throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.cancelAppointment(jsonReq);
@@ -149,7 +149,7 @@ public class AppointmentController {
     //     return ResponseEntity.ok(result);
     // }
 
-    @GetMapping("/get_user_appointments")
+    @GetMapping("/get-user-appointments")
     public ResponseEntity<?> getUserAppointments(@RequestParam Map<String, Object> params) throws Exception {
         
         appointmentService.con = dbConnection.getConnection();
@@ -159,7 +159,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/get_available_slots")
+    @GetMapping("/get-available-slots")
     public ResponseEntity<?> getAvailableSlots(@RequestParam Map<String, Object> params) throws Exception {
         String date = params.get("date") != null ? params.get("date").toString() : null;
         Integer appointmentTypeId = params.get("appointment_type_id") != null ? Integer.parseInt(params.get("appointment_type_id").toString()) : null;
@@ -171,7 +171,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/get_slot_details/{slotId}")
+    @GetMapping("/get-slot-details/{slotId}")
     public ResponseEntity<?> getSlotDetails(@PathVariable Integer slotId) throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.getSlotDetails(slotId);
@@ -179,7 +179,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @PutMapping("/update_slot/{slotId}")
+    @PutMapping("/update-slot/{slotId}")
     public ResponseEntity<?> updateSlot(@PathVariable Integer slotId, @RequestBody String jsonReq) throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.updateSlot(slotId, jsonReq);
@@ -187,7 +187,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/get_appointment_details/{appointmentId}")
+    @GetMapping("/get-appointment-details/{appointmentId}")
     public ResponseEntity<?> getAppointmentDetails(@PathVariable Integer appointmentId) throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.getAppointmentDetails(appointmentId);
@@ -195,7 +195,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/reschedule_appointment/{appointmentId}")
+    @PostMapping("/reschedule-appointment/{appointmentId}")
     public ResponseEntity<?> rescheduleAppointment(@PathVariable Integer appointmentId, @RequestBody String jsonReq) throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.rescheduleAppointment(appointmentId, jsonReq);
@@ -203,7 +203,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/get_provider_slots")
+    @GetMapping("/get-provider-slots")
     public ResponseEntity<?> getProviderSlots(@RequestParam Map<String, Object> params) throws Exception {
         Integer providerId = params.get("provider_id") != null ? Integer.parseInt(params.get("provider_id").toString()) : null;
         String startDate = params.get("start_date") != null ? params.get("start_date").toString() : null;
@@ -229,7 +229,7 @@ public class AppointmentController {
         }
     }
 
-    @GetMapping("/get_appointments")
+    @GetMapping("/get-appointments")
     public ResponseEntity<?> loadAppointments() throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.loadAppointments();
@@ -238,7 +238,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/get_appointment_by_id")
+    @PostMapping("/get-appointment-by-id")
     public ResponseEntity<?> appointmentById(@RequestBody String jsonReq)  throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.appointmentById(jsonReq);
@@ -247,7 +247,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/get_upcoming_appointments")
+    @GetMapping("/get-upcoming-appointments")
     public ResponseEntity<?> getUpcomingAppointments(@RequestParam Map<String, Object> params) throws Exception {
         Integer userId = params.get("user_id") != null ? Integer.parseInt(params.get("user_id").toString()) : null;
         Integer daysAhead = params.get("days_ahead") != null ? Integer.parseInt(params.get("days_ahead").toString()) : 0;
@@ -259,7 +259,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/get_aavailable_slot_by_date")
+    @PostMapping("/get-available-slot-by-date")
     public ResponseEntity<?> getAvailableSlotByDate(@RequestBody String jsonReq)  throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.getAvailableSlotByDate(jsonReq);
@@ -268,7 +268,7 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/reschedule_appointment")
+    @PostMapping("/reschedule-appointment")
     public ResponseEntity<?> rescheduleAppointment(@RequestBody String jsonReq) throws Exception {
         appointmentService.con = dbConnection.getConnection();
         String result = appointmentService.rescheduleAppointment(jsonReq);

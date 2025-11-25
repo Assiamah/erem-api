@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/v1/app_data_service")
+@RequestMapping("/v1/app-data-service")
 @Tag(name = "App Data Service", description = "App Data Service for DiLAP Application")
 public class AppDataController {
     
@@ -26,7 +26,7 @@ public class AppDataController {
     @Autowired
     private DBConnection dbConnection;
 
-    @PostMapping("/submit_lease_application")
+    @PostMapping("/submit-lease-application")
     public ResponseEntity<?> submitLeaseApplication(@RequestBody String jsonReq)  throws Exception {
         appDataService.con = dbConnection.getConnection();
         String result = appDataService.submitLeaseApplication(jsonReq);
@@ -34,7 +34,7 @@ public class AppDataController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/get_user_applications")
+    @PostMapping("/get-user-applications")
     public ResponseEntity<?> getUserApplications(@RequestBody String jsonReq)  throws Exception {
         appDataService.con = dbConnection.getConnection();
         String result = appDataService.getUserApplications(jsonReq);
@@ -45,7 +45,7 @@ public class AppDataController {
         return ResponseEntity.ok(json);
     }
 
-    @PostMapping("/get_user_applications_stats")
+    @PostMapping("/get-user-applications-stats")
     public ResponseEntity<?> getUserApplicationsStats(@RequestBody String jsonReq)  throws Exception {
         appDataService.con = dbConnection.getConnection();
         String result = appDataService.getUserApplicationsStats(jsonReq);
@@ -53,7 +53,7 @@ public class AppDataController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/get_application_details")
+    @PostMapping("/get-application-details")
     public ResponseEntity<?> getApplicationDetails(@RequestBody String jsonReq)  throws Exception {
         appDataService.con = dbConnection.getConnection();
         String result = appDataService.getApplicationDetails(jsonReq);
@@ -61,7 +61,7 @@ public class AppDataController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/get_submitted_applications")
+    @GetMapping("/get-submitted-applications")
     public ResponseEntity<?> getSubmittedApplications()  throws Exception {
         appDataService.con = dbConnection.getConnection();
         String result = appDataService.getSubmittedApplications();

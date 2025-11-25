@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/v1/bill_service")
+@RequestMapping("/v1/bill-service")
 @Tag(name = "Bill Service", description = "Bill Service for DiLAP Application")
 public class BillController {
     BillService billService = new BillService();
@@ -27,7 +27,7 @@ public class BillController {
     @Autowired
     private DBConnection dbConnection;
     
-    @PostMapping("/generate_application_fee")
+    @PostMapping("/generate-application-fee")
     public ResponseEntity<?> generateApplicationFee(@RequestBody String jsonReq)  throws Exception {
         billService.con = dbConnection.getConnection();
         String result = billService.generateApplicationFee(jsonReq);
@@ -35,7 +35,7 @@ public class BillController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/get_complete_bill_details")
+    @PostMapping("/get-complete-bill-details")
     public ResponseEntity<?> getCompleteBillDetails(@RequestBody Map<String, Integer> request) throws Exception {
         billService.con = dbConnection.getConnection();
         int billId = request.get("bill_id");
@@ -44,7 +44,7 @@ public class BillController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/get_user_bills")
+    @GetMapping("/get-user-bills")
     public ResponseEntity<?> getUserBills(@RequestParam Map<String, Object> params) throws Exception {
         billService.con = dbConnection.getConnection();
         ObjectMapper mapper = new ObjectMapper();
@@ -54,7 +54,7 @@ public class BillController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/get_user_bills_stats")
+    @PostMapping("/get-user-bills-stats")
     public ResponseEntity<?> getUserBillsStats(@RequestBody String jsonReq) throws Exception {
         billService.con = dbConnection.getConnection();
         String result = billService.getUserBillsStats(jsonReq);
@@ -62,7 +62,7 @@ public class BillController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/get_bill_details")
+    @PostMapping("/get-bill-details")
     public ResponseEntity<?> getBillDetails(@RequestBody String jsonReq) throws Exception {
         billService.con = dbConnection.getConnection();
         String result = billService.getBillDetails(jsonReq);

@@ -31,10 +31,10 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
     // List of paths to exclude from API key authentication
     private static final List<String> EXCLUDED_PATHS = Arrays.asList(
         "/api/v1/auth/token",
-        "/api/v1/auth/api_key",
+        "/api/v1/auth/api-key",
         "/swagger-ui/**",
         "/v3/api-docs/**",
-        "/api/v1/payment_service/process_payment_callback"
+        "/api/v1/payment-service/process-payment-callback"
     );
 
     @Override

@@ -13,7 +13,7 @@ import com.api.ersmapi.services.auth.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/v1/auth_service")
+@RequestMapping("/v1/auth-service")
 @Tag(name = "Authentication Service", description = "Authentication Service for DiLAP Application")
 public class AuthController {
 
@@ -22,7 +22,7 @@ public class AuthController {
     @Autowired
     private DBConnection dbConnection;
 
-    @PostMapping("/user_login")
+    @PostMapping("/user-login")
     public ResponseEntity<?> userLogin(@RequestBody String jsonReq)  throws Exception {
         authService.con = dbConnection.getConnection();
         String result = authService.userLogin(jsonReq);
@@ -30,7 +30,7 @@ public class AuthController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/verify_otp")
+    @PostMapping("/verify-otp")
     public ResponseEntity<?> verifyOtp(@RequestBody String jsonReq)  throws Exception {
         authService.con = dbConnection.getConnection();
         String result = authService.verifyOtp(jsonReq);
@@ -38,7 +38,7 @@ public class AuthController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/check_registration_email")
+    @PostMapping("/check-registration-email")
     public ResponseEntity<?> checkRegistrationEmail(@RequestBody String jsonReq)  throws Exception {
         authService.con = dbConnection.getConnection();
         String result = authService.checkRegistrationEmail(jsonReq);
@@ -46,7 +46,7 @@ public class AuthController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/verify_registration_email")
+    @PostMapping("/verify-registration-email")
     public ResponseEntity<?> verifyRegistrationEmail(@RequestBody String jsonReq)  throws Exception {
         authService.con = dbConnection.getConnection();
         String result = authService.verifyRegistrationEmail(jsonReq);
@@ -54,7 +54,7 @@ public class AuthController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/create_portal_user_password")
+    @PostMapping("/create-portal-user-password")
     public ResponseEntity<?> createPortalUserPassword(@RequestBody String jsonReq)  throws Exception {
         authService.con = dbConnection.getConnection();
         String result = authService.createPortalUserPassword(jsonReq);

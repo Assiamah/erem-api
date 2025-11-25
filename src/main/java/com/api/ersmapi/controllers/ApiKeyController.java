@@ -48,7 +48,7 @@ public class ApiKeyController {
         }
     }
 
-    @PostMapping("/api_key")
+    @PostMapping("/api-key")
     public ResponseEntity<?> apiKey(@RequestBody String jsonReq) {
         try {
             String result = apiKeyService.checkExistingManagerForApiKey(jsonReq);

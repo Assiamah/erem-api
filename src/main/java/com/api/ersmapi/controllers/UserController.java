@@ -16,7 +16,7 @@ import com.api.ersmapi.services.users.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/v1/user_service")
+@RequestMapping("/v1/user-service")
 @Tag(name = "User Service", description = "User Service for DiLAP Application")
 public class UserController {
     UserService userService = new UserService();
@@ -24,7 +24,7 @@ public class UserController {
     @Autowired
     private DBConnection dbConnection;
 
-    @PostMapping("/load_users")
+    @PostMapping("/load-users")
     public ResponseEntity<?> loadUsers(@RequestBody Map<String, Object> params) throws Exception {
         int page = params.get("page") != null ? (Integer) params.get("page") : 1;
         int limit = params.get("limit") != null ? (Integer) params.get("limit") : 10;
@@ -37,7 +37,7 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/add_user")
+    @PostMapping("/add-user")
     public ResponseEntity<?> addUser(@RequestBody String jsonReq)  throws Exception {
         userService.con = dbConnection.getConnection();
         String result = userService.addUser(jsonReq);
@@ -45,7 +45,7 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/get_user_by_id")
+    @PostMapping("/get-user-by-id")
     public ResponseEntity<?> getUserById(@RequestBody String jsonReq)  throws Exception {
         userService.con = dbConnection.getConnection();
         String result = userService.getUserById(jsonReq);
@@ -54,7 +54,7 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/update_user")
+    @PostMapping("/update-user")
     public ResponseEntity<?> updateUser(@RequestBody String jsonReq)  throws Exception {
         userService.con = dbConnection.getConnection();
         String result = userService.updateUser(jsonReq);
@@ -62,7 +62,7 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/update_portal_user")
+    @PostMapping("/update-portal-user")
     public ResponseEntity<?> updatePortalUser(@RequestBody String jsonReq)  throws Exception {
         userService.con = dbConnection.getConnection();
         String result = userService.updatePortalUser(jsonReq);
@@ -70,7 +70,7 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/get_user_select")
+    @GetMapping("/get-user-select")
     public ResponseEntity<?> getUserSelect() throws Exception {
         userService.con = dbConnection.getConnection();
         String result = userService.getUserSelect();
@@ -78,7 +78,7 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/save_applicant")
+    @PostMapping("/save-applicant")
     public ResponseEntity<?> saveApplicant(@RequestBody String jsonReq)  throws Exception {
         userService.con = dbConnection.getConnection();
         String result = userService.saveApplicant(jsonReq);

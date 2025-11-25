@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 
 @RestController
-@RequestMapping("/v1/payment_service")
+@RequestMapping("/v1/payment-service")
 @Tag(name = "Payment Service", description = "Payment Service for DiLAP Application")
 public class PaymentController {
 
@@ -22,7 +22,7 @@ public class PaymentController {
     @Autowired
     private DBConnection dbConnection;
 
-    @PostMapping("/process_payment_callback")
+    @PostMapping("/process-payment-callback")
     public ResponseEntity<?> processPaymentCallback(@RequestBody String jsonReq) throws Exception {
         paymentService.con = dbConnection.getConnection();
         String result = paymentService.processPaymentCallback(jsonReq);
@@ -31,7 +31,7 @@ public class PaymentController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/initiate_payment_callback")
+    @PostMapping("/initiate-payment-callback")
     public ResponseEntity<?> initiatePaymentCallback(@RequestBody String jsonReq) throws Exception {
         paymentService.con = dbConnection.getConnection();
         String result = paymentService.initiatePaymentCallback(jsonReq);
@@ -40,7 +40,7 @@ public class PaymentController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/verify_payment_by_current_bill")
+    @PostMapping("/verify-payment-by-current-bill")
     public ResponseEntity<?> verifyPaymentByCurrentBill(@RequestBody String jsonReq) throws Exception {
         paymentService.con = dbConnection.getConnection();
         String result = paymentService.verifyPaymentByCurrentBill(jsonReq);

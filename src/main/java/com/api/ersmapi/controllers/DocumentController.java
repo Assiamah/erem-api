@@ -14,7 +14,7 @@ import com.api.ersmapi.services.documents.DocumentService;
 import com.api.ersmapi.config.DBConnection;
 
 @RestController
-@RequestMapping("/v1/document_service")
+@RequestMapping("/v1/document-service")
 @Tag(name = "Document Service", description = "Document Service for Church Land Mgt Application")
 public class DocumentController {
     
@@ -23,7 +23,7 @@ public class DocumentController {
     @Autowired
     private DBConnection dbConnection;
     
-    @PostMapping("/save_supporting_documents")
+    @PostMapping("/save-supporting-documents")
     public ResponseEntity<?> saveSupportingDocuments(@RequestBody String jsonReq) throws Exception {
         documentService.con = dbConnection.getConnection();
         String result = documentService.saveSupportingDocuments(jsonReq);
@@ -32,7 +32,7 @@ public class DocumentController {
         return ResponseEntity.ok(new JSONObject(result).toMap());
     }
 
-    @PostMapping("/save_application_documents")
+    @PostMapping("/save-application-documents")
     public ResponseEntity<?> saveApplicationDocuments(@RequestBody String jsonReq) throws Exception {
         documentService.con = dbConnection.getConnection();
         String result = documentService.saveApplicationDocuments(jsonReq);

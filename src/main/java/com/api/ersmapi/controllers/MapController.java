@@ -16,7 +16,7 @@ import com.api.ersmapi.services.map.MapService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/v1/map_service")
+@RequestMapping("/v1/map-service")
 @Tag(name = "Menu Service", description = "Menu Service for DiLAP Application")
 public class MapController {
 
@@ -26,7 +26,7 @@ public class MapController {
     @Autowired
     private DBConnection dbConnection;
 
-    @PostMapping("/get_parcel_details_by_id")
+    @PostMapping("/get-parcel-details-by-id")
     public ResponseEntity<?> getUserMenus(@RequestBody String jsonReq) {
         Connection conn = null;
         try {

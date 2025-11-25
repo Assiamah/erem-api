@@ -17,7 +17,7 @@ import com.api.ersmapi.services.menu.MenuService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/v1/menu_service")
+@RequestMapping("/v1/menu-service")
 @Tag(name = "Menu Service", description = "Menu Service for DiLAP Application")
 public class MenuController {
 
@@ -27,7 +27,7 @@ public class MenuController {
     @Autowired
     private DBConnection dbConnection;
 
-    @GetMapping("/get_all_menus")
+    @GetMapping("/get-all-menus")
     public ResponseEntity<?> getAllMenus() {
         Connection conn = null;
         try {
@@ -43,7 +43,7 @@ public class MenuController {
         }
     }
 
-    @PostMapping("/get_user_menus")
+    @PostMapping("/get-user-menus")
     public ResponseEntity<?> getUserMenus(@RequestBody String jsonReq) {
         Connection conn = null;
         try {
@@ -59,7 +59,7 @@ public class MenuController {
         }
     }
 
-    @PostMapping("/save_user_menus")
+    @PostMapping("/save-user-menus")
     public ResponseEntity<?> saveUserMenus(@RequestBody String jsonReq) {
         Connection conn = null;
         try {
