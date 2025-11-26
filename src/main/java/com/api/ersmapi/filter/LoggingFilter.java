@@ -28,7 +28,7 @@ public class LoggingFilter extends OncePerRequestFilter {
             Enumeration<String> headerNames = request.getHeaderNames();
             while (headerNames.hasMoreElements()) {
                 String header = headerNames.nextElement();
-                if (!header.equalsIgnoreCase("authorization") && 
+                if (!header.equalsIgnoreCase("Authorization") && 
                     !header.equalsIgnoreCase("X-API-KEY")) {
                     logger.debug("Header: {} = {}", header, request.getHeader(header));
                 }

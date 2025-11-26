@@ -30,10 +30,9 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
 
     // List of paths to exclude from API key authentication
     private static final List<String> EXCLUDED_PATHS = Arrays.asList(
+        "/swagger-ui/**",
         "/api/v1/auth/token",
         "/api/v1/auth/api-key",
-        "/swagger-ui/**",
-        "/v3/api-docs/**",
         "/api/v1/payment-service/process-payment-callback"
     );
 
@@ -44,13 +43,21 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
 
         String requestURI = request.getRequestURI();
 
+        String apiKey = getApiKeyFromRequest(request);
+
         // Skip API key validation for excluded paths
         if (isExcludedPath(requestURI)) {
+
+            logger.info("No API Key Attempt - IP: {}, URI: {}, Method: {}, Key Provided: {}",
+                    request.getRemoteAddr(),
+                    request.getRequestURI(),
+                    request.getMethod(),
+                    apiKey != null ? "[REDACTED]" : "NULL");
+
             filterChain.doFilter(request, response);
             return;
         }
 
-        String apiKey = getApiKeyFromRequest(request);
         // System.out.println(apiKey);
 
         if (apiKey != null) {

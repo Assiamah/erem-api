@@ -27,6 +27,7 @@ public class ApiKeyController {
     @PostMapping("/token")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
         try {
+            
             ApiKeyService.ManagerResult manager = apiKeyService.checkExistingManagerForToken(
                     request.getUsername(),
                     request.getPassword()
