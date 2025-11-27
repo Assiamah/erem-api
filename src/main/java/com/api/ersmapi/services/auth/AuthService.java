@@ -36,7 +36,6 @@ public class AuthService {
 				}
 			}
 		}
-		System.out.println(result);
 		return result;
     }
 

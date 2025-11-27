@@ -172,4 +172,21 @@ public class ApiKeyService {
             Integer rateLimit,
             Instant expiresAt
     ) {}
+
+    public boolean checkExistingWhitelistedIP(String requestIp) throws SQLException {
+        try (Connection con = dataSource.getConnection()) {
+            String SQL = "SELECT security.check_existing_whitelisted_ip(?)";
+            
+            try (PreparedStatement pstmt = con.prepareStatement(SQL)) {
+                pstmt.setString(1, requestIp);
+                
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getBoolean(1);
+                    }
+                }
+            }
+            return false;
+        }
+    }
 }
